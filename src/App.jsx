@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import Note from './components/Note'
+const baseUrl = '/api/notes/'
 
-import { Footer } from './components/Footer'
+const getAll = () => {
+  const request = axios.get(baseUrl)
+  return request.then(response => response.data)
+}
+
 
 const App = () => {
   const [notes, setNotes] = useState([])
@@ -11,7 +15,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios.get('http://localhost:3001/notes').then((response) => {
+    axios.get('http://localhost:3001/api/notes').then((response) => {
       console.log('promise fulfilled')
       setNotes(response.data)
     })
@@ -24,7 +28,7 @@ const App = () => {
     important: Math.random() > 0.5,
   }
 
-  axios.post('http://localhost:3001/notes', noteObject).then((response) => {
+  axios.post('http://localhost:3001/api/notes', noteObject).then((response) => {
       setNotes(notes.concat(response.data))
       setNewNote('')
     })
@@ -62,4 +66,4 @@ const App = () => {
   )
 }
 
-export default App
+export default {getAll, create, update}

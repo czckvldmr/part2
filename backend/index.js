@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express()
-
-app.use(express.json())
+const cors = require('cors')
 
 let notes = [
     {
@@ -20,6 +19,10 @@ let notes = [
         important: true
     }
 ]
+
+app.use(express.json())
+app.use(cors())
+app.use(express.static('dist'))
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -50,10 +53,20 @@ app.get('/api/notes/:id', (request, response) => {
 
 
   app.post('/api/notes', (request, response) => {
-    const note = request.body
-    console.log(note)
-    response.json(note)
+   const maxID = notes.length > 0
+   ? Math.max(...notes.map(n => Number(n.id)))
+   : 0
+
+   const note = request.body
+   note.id = String(maxID + 1)
+
+   notes = notes.concat(note)
+
+   response.json(note)
   })
-const PORT = 3001 
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+
+  
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`)
+})
